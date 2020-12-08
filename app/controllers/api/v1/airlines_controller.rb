@@ -1,6 +1,7 @@
 module Api 
     module V1
         class AirlinesController < ApplicationController
+            protect_from_forgery with: :null_session
             def index 
                 #get all the airlines from our database 
                 airlines = Airline.all
@@ -8,7 +9,7 @@ module Api
                 #user airline serializer to pass that as a value and convert to serialed json
                 render json: AirlineSerializer.new(airlines, options).serialized_json
             end
-            #same thing but with individualized airline
+            #same thing but with individualized airline find by slug param
             def show
                 airline = Airline.find_by(slug: params[:slug])
                 #pass in individual airline
@@ -26,8 +27,8 @@ module Api
             end
 
             def update
-                //instead of creating new instance of method do findby
-                airline = Airline.findBy(slug: params[:slug])
+                #instead of creating new instance of method do findby
+                airline = Airline.find_by(slug: params[:slug])
 
                 if airline.update(airline_params) #if we're able to save the record and everything is valid
                     render json: AirlineSerializer.new(airline, options).serialized_json
@@ -36,9 +37,9 @@ module Api
                 end
             end
 
-            def update
-                //instead of creating new instance of method do findby
-                airline = Airline.findBy(slug: params[:slug])
+            def destroy
+                #instead of creating new instance of method do findby
+                airline = Airline.find_by(slug: params[:slug])
 
                 if airline.destroy
                     head :no_content
